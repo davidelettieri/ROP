@@ -19,6 +19,18 @@ namespace ROP.Tests
             Assert.Equal(Errors.NameIsEmpty, validationResult.Match(p => Errors.None, p => p));
         }
 
+        [Fact(DisplayName = "First validation pass, throw is reached")]
+        public void FirstSuccessThenThrows()
+        {
+            var p = new Customer()
+            {
+                Age = 15,
+                Name = "test"
+            };
+
+            Assert.Throws<Exception>(() => IsNameValid(p).Then(Throw));
+        }
+
         [Fact(DisplayName = "Second validation fails, throw is not reached")]
         public void SecondFail()
         {
