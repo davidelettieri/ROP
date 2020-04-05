@@ -21,7 +21,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - uses: actions/upload-artifact@master
+    - name: publish artifact
+      uses: actions/upload-artifact@master
       with:
         name: dotnet artifacts
         path: ROP/bin/Release
@@ -32,10 +33,11 @@ jobs:
       - name: Setup NuGet.exe for use with actions
         uses: NuGet/setup-nuget@v1.0.2
       - name: Download artifact
-      - uses: actions/download-artifact@v1.0.0
+        uses: actions/download-artifact@v1.0.0
         with:
           name: dotnet artifacts
-      - run: |
+      - name: publish package
+        run: |
           nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/davidelettieri/octokit/index.json" -UserName davidelettieri -p ${{ secrets.GITHUB_TOKEN }}
           nuget push *.nupkg -Source "GitHub"
     
