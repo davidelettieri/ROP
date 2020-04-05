@@ -2,24 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
-    <IsPackable>false</IsPackable>
-
-    <ApplicationIcon />
-
     <OutputType>Library</OutputType>
-
-    <StartupObject />
-
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
     <Authors>Davide Lettieri</Authors>
-
     <Description>ROP helper functions</Description>
-
     <PackageProjectUrl>https://github.com/davidelettieri/ROP</PackageProjectUrl>
-
     <RepositoryUrl>https://github.com/davidelettieri/ROP</RepositoryUrl>
   </PropertyGroup>
-
 </Project>
