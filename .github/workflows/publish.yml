@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -27,3 +25,17 @@ jobs:
       with:
         name: dotnet artifacts
         path: ROP/bin/Release
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup NuGet.exe for use with actions
+        uses: NuGet/setup-nuget@v1.0.2
+      - name: Download artifact
+      - uses: actions/download-artifact@v1.0.0
+        with:
+          name: dotnet artifacts
+      - run: |
+          nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/davidelettieri/octokit/index.json" -UserName davidelettieri -p ${{ secrets.GITHUB_TOKEN }}
+          nuget push *.nupkg -Source "GitHub"
+    
