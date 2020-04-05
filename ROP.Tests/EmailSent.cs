@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ROP
+namespace ROP.Tests
 {
     public class EmailSent
     {

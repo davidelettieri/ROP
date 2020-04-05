@@ -11,13 +11,7 @@ namespace ROP
             return r => r.Match(t => f(t), e => new Result<TSuccess, TError>(e));
         }
 
-        public static Func<T, Result<S, TError>> ToSwitchFunction<T, S, TError>(Func<T, S> a)
-        {
-            return t =>
-            {
-                return a(t);
-            };
-        }
+        public static Func<T, Result<S, TError>> ToSwitchFunction<T, S, TError>(Func<T, S> a) => (t => a(t));
         public static Func<T, Result<T, TError>> ToSwitchFunction<T, TError>(Action<T> a)
         {
             return t =>
@@ -32,5 +26,6 @@ namespace ROP
             => Bind(ToSwitchFunction<TValue, TError>(a))(r);
         public static Result<S, TError> Then<S, TValue, TError>(this Result<TValue, TError> r, Func<TValue, Result<S, TError>> f)
             => Bind(f)(r);
+
     }
 }

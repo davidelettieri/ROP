@@ -1,26 +1,29 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
-using static ROP.Functions;
+using static ROP.AsyncFunctions;
 
-namespace ROP
+namespace ROP.Tests
 {
-    public partial class ROPTests
+    public class ROPAsyncTests
     {
         [Fact(DisplayName = "First validation fails, throw is not reached")]
-        public void FirstFail()
+        public async Task FirstFail()
         {
             var p = new Customer()
             {
                 Age = 15
             };
 
-            var validationResult = IsNameValid(p).Then(Throw);
+            var validationResult = await IsNameValid(p).Then(Throw);
 
             Assert.Equal(Errors.NameIsEmpty, validationResult.Match(p => Errors.None, p => p));
         }
 
         [Fact(DisplayName = "Second validation fails, throw is not reached")]
-        public void SecondFail()
+        public async Task SecondFail()
         {
             var p = new Customer()
             {
@@ -28,13 +31,13 @@ namespace ROP
                 Age = 15
             };
 
-            var validationResult = IsNameValid(p).Then(IsEmailValid).Then(Throw);
+            var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(Throw);
 
             Assert.Equal(Errors.InvalidEmail, validationResult.Match(p => Errors.None, p => p));
         }
 
         [Fact(DisplayName = "All success")]
-        public void AllSuccess()
+        public async Task AllSuccess()
         {
             var p = new Customer()
             {
@@ -43,13 +46,13 @@ namespace ROP
                 Age = 15
             };
 
-            var validationResult = IsNameValid(p).Then(IsEmailValid).Then(SendEmail);
+            var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(SendEmail);
 
             Assert.True(validationResult.Match(p => true, p => false));
         }
 
         [Fact(DisplayName = "Action is performed")]
-        public void InsertAction()
+        public async Task InsertAction()
         {
             var p = new Customer()
             {
@@ -58,14 +61,14 @@ namespace ROP
                 Age = 15
             };
 
-            var validationResult = IsNameValid(p).Then(IsEmailValid).Then(SendEmail).Then(EmitEmailSentEvent);
+            var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(SendEmail).Then(EmitEmailSentEvent);
 
             Assert.True(validationResult.Match(p => true, p => false));
             Assert.True(validationResult.Match(p => p.EventEmitted, p => false));
         }
 
         [Fact(DisplayName = "Func is performed")]
-        public void InsertFunc()
+        public async Task InsertFunc()
         {
             var p = new Customer()
             {
@@ -77,43 +80,47 @@ namespace ROP
 
             var finalDate = new DateTime(2020, 04, 03);
 
-            var validationResult = IsNameValid(p)
-                                   .Then(IsEmailValid)
-                                   .Then(SendEmail)
-                                   .Then(EmitEmailSentEvent)
-                                   .Then(es => UpdateCustomer(es, finalDate));
+            var validationResult = await IsNameValid(p)
+                                         .Then(IsEmailValid)
+                                         .Then(SendEmail)
+                                         .Then(EmitEmailSentEvent)
+                                         .Then(es => UpdateCustomer(es, finalDate));
 
             Assert.True(validationResult.Match(p => true, p => false));
             Assert.True(validationResult.Match(p => p.Customer.LastEmailSent == finalDate, p => false));
         }
 
-        private static Result<Customer, Errors> Throw(Customer customer)
+        private static Task<Result<Customer, Errors>> Throw(Customer customer)
         {
             throw new Exception("Reached!");
         }
-        private static Result<Customer, Errors> IsNameValid(Customer customer)
+        private static Task<Result<Customer, Errors>> IsNameValid(Customer customer)
         {
             if (string.IsNullOrWhiteSpace(customer.Name))
-                return Errors.NameIsEmpty;
+                return Task.FromResult(new Result<Customer, Errors>(Errors.NameIsEmpty));
 
-            return customer;
+            return Task.FromResult(new Result<Customer, Errors>(customer));
         }
-        private static Result<Customer, Errors> IsEmailValid(Customer customer)
+        private static Task<Result<Customer, Errors>> IsEmailValid(Customer customer)
         {
             if (customer?.Email?.IndexOf('@') > -1)
-                return customer;
+                return Task.FromResult(new Result<Customer, Errors>(customer));
 
-            return Errors.InvalidEmail;
+            return Task.FromResult(new Result<Customer, Errors>(Errors.InvalidEmail));
         }
-        private static Result<EmailSent, Errors> SendEmail(Customer customer)
+        private static Task<Result<EmailSent, Errors>> SendEmail(Customer customer)
         {
-            return new EmailSent() { Customer = customer };
+            return Task.FromResult(new Result<EmailSent, Errors>(new EmailSent() { Customer = customer }));
         }
-        private static void EmitEmailSentEvent(EmailSent es) { es.EventEmitted = true; }
-        private static EmailSent UpdateCustomer(EmailSent es, DateTime date)
+        private static Task EmitEmailSentEvent(EmailSent es)
+        {
+            es.EventEmitted = true;
+            return Task.CompletedTask;
+        }
+        private static Task<EmailSent> UpdateCustomer(EmailSent es, DateTime date)
         {
             es.Customer.LastEmailSent = date;
-            return es;
+            return Task.FromResult(es);
         }
     }
 }

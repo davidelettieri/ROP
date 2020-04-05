@@ -1,4 +1,4 @@
-﻿namespace ROP
+﻿namespace ROP.Tests
 {
     public enum Errors
     {
