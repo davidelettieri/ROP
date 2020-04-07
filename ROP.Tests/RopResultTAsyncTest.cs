@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ROP.Tests
 {
-    public class ROPAsyncTests
+    public class RopResultTAsyncTest
     {
         [Fact(DisplayName = "First validation fails, throw is not reached")]
         public async Task FirstFail()
@@ -18,7 +18,7 @@ namespace ROP.Tests
 
             var validationResult = await IsNameValid(p).Then(Throw);
 
-            Assert.Equal(Errors.NameIsEmpty, validationResult.Match(p => Errors.None, p => p));
+            Assert.True(validationResult.Match(p => false, p => p.ReasonId == nameof(NameIsEmpty)));
         }
 
         [Fact(DisplayName = "First validation pass, throw is reached")]
@@ -44,7 +44,7 @@ namespace ROP.Tests
 
             var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(Throw);
 
-            Assert.Equal(Errors.InvalidEmail, validationResult.Match(p => Errors.None, p => p));
+            Assert.True(validationResult.Match(p => false, p => p.ReasonId == nameof(InvalidEmail)));
         }
 
         [Fact(DisplayName = "All success")]
@@ -101,27 +101,28 @@ namespace ROP.Tests
             Assert.True(validationResult.Match(p => p.Customer.LastEmailSent == finalDate, p => false));
         }
 
-        private static Task<Result<Customer, Errors>> Throw(Customer customer)
+        private static Task<Result<Customer>> Throw(Customer customer)
         {
             throw new Exception("Reached!");
         }
-        private static Task<Result<Customer, Errors>> IsNameValid(Customer customer)
+
+        private static Task<Result<Customer>> IsNameValid(Customer customer)
         {
             if (string.IsNullOrWhiteSpace(customer.Name))
-                return Task.FromResult(new Result<Customer, Errors>(Errors.NameIsEmpty));
+                return Task.FromResult(new Result<Customer>(new NameIsEmpty()));
 
-            return Task.FromResult(new Result<Customer, Errors>(customer));
+            return Task.FromResult(new Result<Customer>(customer));
         }
-        private static Task<Result<Customer, Errors>> IsEmailValid(Customer customer)
+        private static Task<Result<Customer>> IsEmailValid(Customer customer)
         {
             if (customer?.Email?.IndexOf('@') > -1)
-                return Task.FromResult(new Result<Customer, Errors>(customer));
+                return Task.FromResult(new Result<Customer>(customer));
 
-            return Task.FromResult(new Result<Customer, Errors>(Errors.InvalidEmail));
+            return Task.FromResult(new Result<Customer>(new InvalidEmail()));
         }
-        private static Task<Result<EmailSent, Errors>> SendEmail(Customer customer)
+        private static Task<Result<EmailSent>> SendEmail(Customer customer)
         {
-            return Task.FromResult(new Result<EmailSent, Errors>(new EmailSent() { Customer = customer }));
+            return Task.FromResult(new Result<EmailSent>(new EmailSent() { Customer = customer }));
         }
         private static Task EmitEmailSentEvent(EmailSent es)
         {
@@ -133,5 +134,25 @@ namespace ROP.Tests
             es.Customer.LastEmailSent = date;
             return Task.FromResult(es);
         }
+
+
+        #region errors 
+
+        public class NameIsEmpty : Failure
+        {
+            public NameIsEmpty() : base(nameof(NameIsEmpty), "Name of the user is empty")
+            {
+            }
+        }
+
+        public class InvalidEmail : Failure
+        {
+            public InvalidEmail() : base(nameof(InvalidEmail), "Email is not valid")
+            {
+            }
+        }
+
+
+        #endregion
     }
 }

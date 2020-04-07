@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ROP
+namespace ROP.UnionType
 {
-    public class Union<TOne, TOther>
+    public class Union<TOne, TOther> : IUnion<TOne, TOther>
     {
         private readonly TOne _toneValue;
         private readonly TOther _totherValue;
