@@ -9,7 +9,7 @@ namespace ROP
         public string ReasonId { get; }
         public string Message { get; }
 
-        protected Failure(string reasonId, string message)
+        public Failure(string reasonId, string message)
         {
             ReasonId = reasonId;
             Message = message;
