@@ -2,55 +2,55 @@
 
 namespace ROP.UnionType
 {
-    public class Union<TOne, TOther> : IUnion<TOne, TOther>
+    public class Union<T0, T1> : IUnion<T0, T1>
     {
-        private readonly TOne _toneValue;
-        private readonly TOther _totherValue;
+        private readonly T0 _t0;
+        private readonly T1 _t1;
         private readonly UnionType _type;
 
-        public Union(TOne value)
+        public Union(T0 value)
         {
-            _toneValue = value;
-            _type = UnionType.TOne;
+            _t0 = value;
+            _type = UnionType.T0;
         }
 
-        public Union(TOther value)
+        public Union(T1 value)
         {
-            _totherValue = value;
-            _type = UnionType.TOther;
+            _t1 = value;
+            _type = UnionType.T1;
         }
 
-        public void Switch(Action<TOne> actionTOne, Action<TOther> actionTOther)
+        public void Switch(Action<T0> actionT0, Action<T1> actionT1)
         {
-            if (actionTOne is null)
-                throw new ArgumentNullException(nameof(actionTOne));
-            if (actionTOther is null)
-                throw new ArgumentNullException(nameof(actionTOther));
+            if (actionT0 is null)
+                throw new ArgumentNullException(nameof(actionT0));
+            if (actionT1 is null)
+                throw new ArgumentNullException(nameof(actionT1));
 
             switch (_type)
             {
-                case UnionType.TOne:
-                    actionTOne(_toneValue);
+                case UnionType.T0:
+                    actionT0(_t0);
                     break;
-                case UnionType.TOther:
-                    actionTOther(_totherValue);
+                case UnionType.T1:
+                    actionT1(_t1);
                     break;
             }
         }
 
-        public TResult Match<TResult>(Func<TOne, TResult> funcTOne, Func<TOther, TResult> funcTOther)
+        public TResult Match<TResult>(Func<T0, TResult> funcT0, Func<T1, TResult> functT1)
         {
-            if (funcTOne is null)
-                throw new ArgumentNullException(nameof(funcTOne));
-            if (funcTOther is null)
-                throw new ArgumentNullException(nameof(funcTOther));
+            if (funcT0 is null)
+                throw new ArgumentNullException(nameof(funcT0));
+            if (functT1 is null)
+                throw new ArgumentNullException(nameof(functT1));
 
             switch (_type)
             {
-                case UnionType.TOne:
-                    return funcTOne(_toneValue);
-                case UnionType.TOther:
-                    return funcTOther(_totherValue);
+                case UnionType.T0:
+                    return funcT0(_t0);
+                case UnionType.T1:
+                    return functT1(_t1);
             }
 
             throw new InvalidOperationException();
@@ -58,8 +58,11 @@ namespace ROP.UnionType
 
         enum UnionType
         {
-            TOne,
-            TOther
+            T0,
+            T1
         }
+
+        public static implicit operator Union<T0, T1>(T0 t0) => new Union<T0, T1>(t0);
+        public static implicit operator Union<T0, T1>(T1 t1) => new Union<T0, T1>(t1);
     }
 }
