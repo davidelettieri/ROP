@@ -8,6 +8,6 @@
     <Description>ROP helper functions, contains Result type and Then extensions method to concatenate several methods.</Description>
     <PackageProjectUrl>https://github.com/davidelettieri/ROP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/davidelettieri/ROP</RepositoryUrl>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 </Project>
