@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Davide Lettieri</Authors>
     <Description>ROP helper functions, contains Result type and Then extensions method to concatenate several methods.</Description>
     <PackageProjectUrl>https://github.com/davidelettieri/ROP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/davidelettieri/ROP</RepositoryUrl>
-    <Version>1.0.6</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 </Project>
