@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ROP.UnionType
 {
-    public interface IUnion<T0, T1>
+    public interface IUnion<out T0, out T1>
     {
-        TResult Match<TResult>(Func<T0, TResult> ft0, Func<T1, TResult> ft1);
+        TResult Match<TResult>(Func<T0, TResult> funcT0, Func<T1, TResult> funcT1);
     }
 }

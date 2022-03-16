@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net6.0;netcoreapp3.1</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Davide Lettieri</Authors>
     <Description>ROP helper functions, contains Result type and Then extensions method to concatenate several methods.</Description>
     <PackageProjectUrl>https://github.com/davidelettieri/ROP</PackageProjectUrl>
     <RepositoryUrl>https://github.com/davidelettieri/ROP</RepositoryUrl>
-    <Version>1.1.0</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 </Project>

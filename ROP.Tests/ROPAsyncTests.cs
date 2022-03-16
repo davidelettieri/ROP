@@ -60,7 +60,7 @@ namespace ROP.Tests
 
             var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(SendEmail);
 
-            Assert.True(validationResult.Match(p => true, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
         }
 
         [Fact(DisplayName = "Action is performed")]
@@ -75,8 +75,8 @@ namespace ROP.Tests
 
             var validationResult = await IsNameValid(p).Then(IsEmailValid).Then(SendEmail).Then(EmitEmailSentEvent);
 
-            Assert.True(validationResult.Match(p => true, p => false));
-            Assert.True(validationResult.Match(p => p.EventEmitted, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
+            Assert.True(validationResult.Match(u => u.EventEmitted, _ => false));
         }
 
         [Fact(DisplayName = "Func is performed")]
@@ -98,8 +98,8 @@ namespace ROP.Tests
                                          .Then(EmitEmailSentEvent)
                                          .Then(es => UpdateCustomer(es, finalDate));
 
-            Assert.True(validationResult.Match(p => true, p => false));
-            Assert.True(validationResult.Match(p => p.Customer.LastEmailSent == finalDate, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
+            Assert.True(validationResult.Match(e => e.Customer.LastEmailSent == finalDate, _ => false));
         }
 
         private static Task<Result<Customer, Errors>> Throw(Customer customer)

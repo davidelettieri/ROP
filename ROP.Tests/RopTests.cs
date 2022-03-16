@@ -1,10 +1,9 @@
 using System;
 using Xunit;
-using static ROP.Functions;
 
 namespace ROP.Tests
 {
-    public partial class ROPTests
+    public class RopTests
     {
         [Fact(DisplayName = "First validation fails, throw is not reached")]
         public void FirstFail()
@@ -16,7 +15,7 @@ namespace ROP.Tests
 
             var validationResult = IsNameValid(p).Then(Throw);
 
-            Assert.Equal(Errors.NameIsEmpty, validationResult.Match(p => Errors.None, p => p));
+            Assert.Equal(Errors.NameIsEmpty, validationResult.Match(_ => Errors.None, e => e));
         }
 
         [Fact(DisplayName = "First validation pass, throw is reached")]
@@ -42,7 +41,7 @@ namespace ROP.Tests
 
             var validationResult = IsNameValid(p).Then(IsEmailValid).Then(Throw);
 
-            Assert.Equal(Errors.InvalidEmail, validationResult.Match(p => Errors.None, p => p));
+            Assert.Equal(Errors.InvalidEmail, validationResult.Match(_ => Errors.None, e => e));
         }
 
         [Fact(DisplayName = "All success")]
@@ -57,7 +56,7 @@ namespace ROP.Tests
 
             var validationResult = IsNameValid(p).Then(IsEmailValid).Then(SendEmail);
 
-            Assert.True(validationResult.Match(p => true, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
         }
 
         [Fact(DisplayName = "Action is performed")]
@@ -72,8 +71,8 @@ namespace ROP.Tests
 
             var validationResult = IsNameValid(p).Then(IsEmailValid).Then(SendEmail).Then(EmitEmailSentEvent);
 
-            Assert.True(validationResult.Match(p => true, p => false));
-            Assert.True(validationResult.Match(p => p.EventEmitted, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
+            Assert.True(validationResult.Match(r => r.EventEmitted, _ => false));
         }
 
         [Fact(DisplayName = "Func is performed")]
@@ -95,8 +94,8 @@ namespace ROP.Tests
                                    .Then(EmitEmailSentEvent)
                                    .Then(es => UpdateCustomer(es, finalDate));
 
-            Assert.True(validationResult.Match(p => true, p => false));
-            Assert.True(validationResult.Match(p => p.Customer.LastEmailSent == finalDate, p => false));
+            Assert.True(validationResult.Match(_ => true, _ => false));
+            Assert.True(validationResult.Match(e => e.Customer.LastEmailSent == finalDate, _ => false));
         }
 
         private static Result<Customer, Errors> Throw(Customer customer)

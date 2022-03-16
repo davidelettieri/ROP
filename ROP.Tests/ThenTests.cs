@@ -26,10 +26,10 @@ namespace ROP.Tests
         public class SearchResult { }
         public class ProjectRepository
         {
-            public Task<SearchResult> Search(SearchRequest request) => Task.FromResult(new SearchResult());
+            public Task<SearchResult> Search(SearchRequest _) => Task.FromResult(new SearchResult());
         }
 
-        public Task<Result<User>> GetUser(string id) => Task.FromResult(new Result<User>(new User()));
+        public Task<Result<User>> GetUser(string _) => Task.FromResult(new Result<User>(new User()));
         public Task<Result<User>> IsAdmin(User u) => Task.FromResult(new Result<User>(u));
 
 
