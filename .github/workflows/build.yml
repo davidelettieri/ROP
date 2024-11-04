@@ -1,18 +1,29 @@
-name: Build
+name: Build and test
+
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v1.6
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup .NET Core SDK 8.0.x
+      uses: actions/setup-dotnet@v4.1.0
+      with:
+        dotnet-version: 8.0.x
+        source-url: https://nuget.pkg.github.com/<owner>/index.json
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal

@@ -1,9 +1,8 @@
-﻿namespace ROP.Tests
+﻿namespace ROP.Tests;
+
+public enum Errors
 {
-    public enum Errors
-    {
-        None,
-        NameIsEmpty,
-        InvalidEmail
-    }
+    None,
+    NameIsEmpty,
+    InvalidEmail
 }
