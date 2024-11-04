@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace ROP.Tests
+namespace ROP.Tests;
+
+public class Customer
 {
-    public class Customer
-    {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public int Age { get; set; }
-        public DateTime LastEmailSent { get; set; }
-    }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public int Age { get; set; }
+    public DateTime LastEmailSent { get; set; }
 }

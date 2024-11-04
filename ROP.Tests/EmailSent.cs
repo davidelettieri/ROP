@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ROP.Tests
+namespace ROP.Tests;
+
+public class EmailSent
 {
-    public class EmailSent
-    {
-        public Customer Customer { get; set; }
-        public bool EventEmitted { get; set; }
-    }
+    public Customer Customer { get; set; }
+    public bool EventEmitted { get; set; }
 }
